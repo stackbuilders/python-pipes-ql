@@ -8,6 +8,8 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.9"
 pipe = "^1.6.0"
+ipython = "^8.1.1"
+jurigged = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
 
