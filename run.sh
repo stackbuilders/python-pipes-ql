@@ -1,3 +1,2 @@
 #!/bin/sh
-clear
-python real_pipes.py
+ls $@ | entr -cr python $@
