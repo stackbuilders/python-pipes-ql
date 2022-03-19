@@ -14,6 +14,15 @@ iddy = Pipe(lambda x: x)
 exp = Pipe(lambda x, y: x ** y)
 stdio = Pipe(lambda thing: print(thing))
 
+print(
+  3
+  | iddy
+  | exp(2)
+  | iddy
+  | iddy
+  | exp(2)
+)
+
 # exp(3,iddy(iddy(3)))
 result = (
   3
@@ -24,35 +33,52 @@ result = (
 )
 
 ## Iterators & Iterables
+class Range:
+    def __init__(self, init, end):
+        self.init = init
+        self.end = end
+
+    def __next__(self):
+        aux = self.init
+        if self.init <= self.end:
+            self.init += 1
+            return aux
+        raise StopIteration()
+
+    def __iter__(self):
+        return self
+
+
 select = Pipe(lambda iterable, selector: map(selector, iterable))
+add = Pipe(lambda iterable: sum(iterable))
 to_list = Pipe(lambda iterable: list(iterable))
 
 result2 = (
-    [1,2,3]
+    Range(3, 7)
     | select(lambda x: x*3)
     | select(lambda x: x+3)
     | select(lambda x: x**3)
     | to_list
 )
 
-# print(result2)
+print("I", result2)
 
 ## Generators
-def ones():
-    while True:
-        yield 1
+def my_range(init, end):
+    aux = init
+    while aux <= end:
+        yield aux
+        aux += 1
 
-# print(next(ones()))
-# print(next(ones()))
-# print(next(ones()))
+result3 = (
+    my_range(3, 7)
+    | select(lambda x: x*3)
+    | select(lambda x: x+3)
+    | select(lambda x: x**3)
+    | to_list
+)
 
-zeros = (
-    ones()
-    | select(lambda x: x - 1)
-    )
-
-# for zero in zeros:
-#     print(zero)
+print("G", result3)
 
 ## Decorators
 @Pipe
@@ -65,7 +91,7 @@ def take(iterable, qte):
             return
 
 result3 = (
-    ones()
+    my_range(10, 100)
     | select(lambda x: x + 3)
     | take(5)
     | to_list
@@ -90,7 +116,7 @@ def num_to_fizzbuzz(n):
 
 result4 = (
     counting()
-    | take(1000)
+    | take(10)
     | select(num_to_fizzbuzz)
 )
 
